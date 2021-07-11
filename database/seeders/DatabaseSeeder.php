@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Answer;
 use App\Models\Question;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -15,10 +16,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        User::factory(5)->create()->each(function(User $user){
-            for($i = 1; $i < rand(5,10); $i++) {
-                $user->questions()->create(Question::factory()->make()->toArray());
-            }
+        User::factory(5)->create()->each(function(User $user) {
+            $user->questions()->saveMany(Question::factory(rand(2,5))->make())
+                ->each(function(Question $question){
+                    $question->answers()->saveMany(Answer::factory(rand(2,7))->make());
+                });
+
         });
     }
 }

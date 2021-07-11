@@ -2,11 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\Question;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use PharIo\Manifest\Author;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -35,6 +37,10 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Route::bind('slug', function($slug) {
+            return Question::with('answers.author')->where('slug',$slug)->firstOrFail();
+        });
+
         $this->configureRateLimiting();
 
         $this->routes(function () {

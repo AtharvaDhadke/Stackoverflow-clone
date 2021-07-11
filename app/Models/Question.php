@@ -13,6 +13,29 @@ class Question extends Model
 
     protected $guarded = ['id'];
 
+
+    public function getUrlAttribute()
+    {
+        return "questions/{$this->slug}";
+    }
+
+    public function getCreatedDateAttribute()
+    {
+        return $this->created_at->diffForHumans();
+    }
+
+    public function getAnswerStyleAttribute()
+    {
+        if($this->answers_count > 0)
+        {
+            if($this->best_answer_id) {
+            return "has-best-answer";
+            }
+            return "answered";
+        }
+        return "unanswered";
+    }
+
     public function setTitleAttribute(string $title)
     {
         $this->attributes['title'] = $title;
@@ -22,5 +45,10 @@ class Question extends Model
     public function owner()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function answers()
+    {
+        return $this->hasMany(Answer::class);
     }
 }
