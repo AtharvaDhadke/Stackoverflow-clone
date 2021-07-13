@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Votable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -10,6 +11,7 @@ use Illuminate\Support\Str;
 class Question extends Model
 {
     use HasFactory;
+    use Votable;
 
     protected $guarded = ['id'];
 
@@ -67,6 +69,13 @@ class Question extends Model
 
         }
         return 'text-black-50';
+    }
+
+
+
+    public function votes()
+    {
+        return $this->morphToMany(User::class, 'vote')->withTimestamps();
     }
 
     public function owner()

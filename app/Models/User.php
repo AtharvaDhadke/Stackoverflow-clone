@@ -53,6 +53,57 @@ class User extends Authenticatable
     Relatiohship Methods
     */
 
+
+    public function hasQuestionUpVote(Question $question)
+    {
+        return auth()->user()->votesQuestions()->where(['vote'=>1, 'vote_id'=>$question->id, 'vote_type'=>Question::class])->exists();
+
+    }
+
+    public function hasQuestionDownVote(Question $question)
+    {
+        return auth()->user()->votesQuestions()->where(['vote'=>-1, 'vote_id'=>$question->id, 'vote_type'=>Question::class])->exists();
+
+    }
+
+    public function hasVoteForQuestion(Question $question)
+    {
+        return $this->hasQuestionUpVote($question) || $this->hasQuestionDownVote($question);
+    }
+
+
+
+
+
+
+
+
+    public function hasAnswerUpVote(Answer $answer)
+    {
+        return auth()->user()->votesAnswers()->where(['vote'=>1, 'vote_id'=>$answer->id, 'vote_type'=>Answer::class])->exists();
+
+    }
+
+    public function hasAnswerDownVote(Answer $answer)
+    {
+        return auth()->user()->votesAnswers()->where(['vote'=>-1, 'vote_id'=>$answer->id, 'vote_type'=>Answer::class])->exists();
+
+    }
+
+    public function hasVoteForAnswer(Answer $answer)
+    {
+        return $this->hasAnswerUpVote($answer) || $this->hasAnswerDownVote($answer);
+    }
+
+
+
+
+
+
+
+
+
+
     public function questions()
     {
         return $this->hasMany(Question::class);
@@ -67,4 +118,15 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Question::class)->withTimestamps();
     }
+
+    public function votesQuestions()
+    {
+        return $this->morphedByMany(Question::class, 'vote')->withTimestamps();
+    }
+
+    public function votesAnswers()
+    {
+        return $this->morphedByMany(Answer::class, 'vote')->withTimestamps();
+    }
+
 }

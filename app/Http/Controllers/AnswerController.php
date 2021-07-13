@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateAnswerRequest;
 use App\Http\Requests\UpdateQuestionRequest;
 use App\Models\Answer;
 use App\Models\Question;
+use App\Notifications\NewReplyAdded;
 use App\Policies\AnswerPolicy;
 use CreateAnswersTable;
 use Illuminate\Http\Request;
@@ -20,6 +21,7 @@ class AnswerController extends Controller
             'user_id' => auth()->id()
         ]);
 
+        $question->owner->notify(new NewReplyAdded($question));
         session()->flash('success','Your answer submitted successfully');
         return redirect($question->url);
     }

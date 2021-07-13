@@ -12,6 +12,9 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-12">
+                <div class="d-flex justify-content-end mb-2">
+                    <a href="{{ route('questions.index') }}" class="btn btn-outline-success">All Questions</a>
+                </div>
                 <div class="card">
                     <div class="card-header"><h1>{{ $question->title }}</h1></div>
                     <div class="card-body">
@@ -21,13 +24,38 @@
                         <div class="d-flex justify-content-between mr-3">
                             <div class="d-flex">
                                 <div>
-                                    <a href="" title="Up Vote" class="Vote-up d-block text-center text-black-50">
-                                        <i class="fa fa-caret-up fa-3x"></i>
-                                    </a>
-                                    <h4 class="votes-count text-muted text-centre m-0">45</h4>
-                                    <a href="" title="Up down" class="Vote-down d-block text-center text-black-50">
-                                        <i class="fa fa-caret-down fa-3x"></i>
-                                    </a>
+                                    @auth
+                                       <form action="{{ route('questions.vote', [$question->id, 1]) }}" method="POST">
+                                            @csrf
+                                            <button type="submit"
+                                                    title="Up Vote"
+                                                    class="btn {{ auth()->user()->hasQuestionUpVote($question) ? 'text-dark' : 'text-black-50'}}"
+                                            >
+                                                <i class="fa fa-caret-up fa-3x"></i>
+                                            </button>
+                                       </form>
+                                    @else
+                                       <a href="{{ route('login') }}" title="Up Vote" class="Vote-up d-block text-center text-black-50">
+                                            <i class="fa fa-caret-up fa-3x"></i>
+                                       </a>
+                                    @endauth
+                                       <h4 class="votes-count text-muted text-center m-0">{{ $question->votes_count}}</h4>
+
+                                    @auth
+                                       <form action="{{ route('questions.vote', [$question->id, -1]) }}" method="POST">
+                                            @csrf
+                                            <button type="submit"
+                                                    title="Up Vote"
+                                                    class="btn {{ auth()->user()->hasQuestionDownVote($question) ? 'text-dark' : 'text-black-50'}}"
+                                            >
+                                                <i class="fa fa-caret-down fa-3x"></i>
+                                            </button>
+                                       </form>
+                                    @else
+                                       <a href="{{ route('login') }}" title="Up Vote" class="Vote-up d-block text-center text-black-50">
+                                            <i class="fa fa-caret-down fa-3x"></i>
+                                       </a>
+                                    @endauth
                                 </div>
 
                                 <div class="ml-5 mt-3">

@@ -12,13 +12,38 @@
 
                             <div class="d-flex">
                                 <div>
-                                    <a href="" title="Up Vote" class="Vote-up d-block text-center text-black-50">
-                                        <i class="fa fa-caret-up fa-3x"></i>
-                                    </a>
-                                    <h4 class="votes-count text-muted text-centre m-0">45</h4>
-                                    <a href="" title="Up down" class="Vote-down d-block text-center text-black-50">
-                                        <i class="fa fa-caret-down fa-3x"></i>
-                                    </a>
+                                    @auth
+                                       <form action="{{ route('answers.vote', [$answer->id, 1]) }}" method="POST">
+                                            @csrf
+                                            <button type="submit"
+                                                    title="Up Vote"
+                                                    class="btn {{ auth()->user()->hasAnswerUpVote($answer) ? 'text-dark' : 'text-black-50'}}"
+                                            >
+                                                <i class="fa fa-caret-up fa-3x"></i>
+                                            </button>
+                                       </form>
+                                    @else
+                                       <a href="{{ route('login') }}" title="Up Vote" class="Vote-up d-block text-center text-black-50">
+                                            <i class="fa fa-caret-up fa-3x"></i>
+                                       </a>
+                                    @endauth
+                                       <h4 class="votes-count text-muted text-center m-0">{{ $answer->votes_count}}</h4>
+
+                                    @auth
+                                       <form action="{{ route('answers.vote', [$answer->id, -1]) }}" method="POST">
+                                            @csrf
+                                            <button type="submit"
+                                                    title="Up Vote"
+                                                    class="btn {{ auth()->user()->hasAnswerDownVote($answer) ? 'text-dark' : 'text-black-50'}}"
+                                            >
+                                                <i class="fa fa-caret-down fa-3x"></i>
+                                            </button>
+                                       </form>
+                                    @else
+                                       <a href="{{ route('login') }}" title="Up Vote" class="Vote-up d-block text-center text-black-50">
+                                            <i class="fa fa-caret-down fa-3x"></i>
+                                       </a>
+                                    @endauth
                                 </div>
 
                                 <div class="ml-5 mt-3">
@@ -33,16 +58,19 @@
                                     @else
                                         @if ($answer->is_best_answer)
                                             <i class="fa fa-check fa-2x text-success d-block mb-2"></i>
+
                                         @endif
 
                                     @endcan
-                                    <h4 class="views-count text-muted text-center m-0">123</h4>
+                                         <h6 class="views-count text-muted text-center m-0">Best Answer</h6>
                                 </div>
                             </div>
 
+                           <div class="">
                             @can('update',$answer)
-                            <a href="{{ route('questions.answers.edit', [$question->id, $answer->id]) }}" class="btn btn-sm btn-outline-info">Edit</a>
+                            <a href="{{ route('questions.answers.edit', [$question->id, $answer->id]) }}" class="btn btn-sm btn-outline-success">Edit</a>
                             @endif
+                           </div>
 
                             @can('delete', $answer)
                             <form action="{{ route('questions.answers.destroy', [$question->id, $answer->id]) }}" method="POST" class="d-inline">
